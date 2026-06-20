@@ -7,24 +7,10 @@ public class TrainingTracker {
 
         ArrayList<Routine> routines = new ArrayList<>();
 
-        routines.add(new Routine("Full Body Lift", "Strength Training"));
-        routines.add(new Routine("Push Day Lift", "Strength Training"));
-        routines.add(new Routine("Pull Day Lift", "Strength Training"));
-        routines.add(new Routine("Lower Body Lift", "Strength Training"));
-
-        routines.add(new Routine("Hard Sparring", "Sparring Day"));
-        routines.add(new Routine("Light Sparring", "Sparring Day"));
-
-        routines.add(new Routine("Padwork + Bagwork", "Padwork/Bagwork"));
-        routines.add(new Routine("Hard Pad Rounds", "Padwork/Bagwork"));
-        routines.add(new Routine("Hard Bag Rounds", "Padwork/Bagwork"));
-
-        routines.add(new Routine("HIIT Cardio", "Cardio Day"));
-        routines.add(new Routine("Light run", "Cardio Day"));
-        routines.add(new Routine("Long run", "Cardio Day"));
-
-        routines.add(new Routine("Sauna and Stretching", "Active Rest Day"));
-        routines.add(new Routine("Light Jog", "Active Rest Day"));
+        Routine pushDay = new Routine("Push Day Lift", "Strength Training");
+        pushDay.addExercise(new Exercise("Bench Press"));
+        pushDay.addExercise(new Exercise("Shoulder Press"));
+        routines.add(pushDay);
 
         System.out.println("Training Tracker App");
 
@@ -65,8 +51,8 @@ public class TrainingTracker {
             Routine selectedRoutine = null;
 
             System.out.println("What would you like to do:");
-            System.out.println("1. Saved routines:");
-            System.out.println("2. Create new routine:");
+            System.out.println("1. Saved routines");
+            System.out.println("2. Create new routine");
 
             int routineTypeChoice = sc.nextInt();
 
@@ -80,20 +66,91 @@ public class TrainingTracker {
                         matchingRoutines.add(routine);
                     }
                 }
+
                 if (matchingRoutines.isEmpty()) {
-                    System.out.println("No saved routines for " + selectedTrainingType + ".");
+                    System.out.println("No saved routines for " + selectedTrainingType);
                 } else {
                     for (int i = 0; i < matchingRoutines.size(); i++) {
                         System.out.println((i + 1) + ". " + matchingRoutines.get(i));
                     }
 
-                    System.out.println("Choose a routine:");
+                    System.out.print("Choose a routine: ");
                     int selectedRoutineNumber = sc.nextInt();
 
-                    if (selectedRoutineNumber >= 1 && selectedRoutineNumber <= matchingRoutines.size()) {
+                    if (selectedRoutineNumber >= 1
+                            && selectedRoutineNumber <= matchingRoutines.size()) {
+
                         selectedRoutine = matchingRoutines.get(selectedRoutineNumber - 1);
-                        System.out.println("You chose: ");
+
+                        System.out.println("You chose:");
                         System.out.println(selectedRoutine);
+
+                        boolean managingRoutine = true;
+
+                        while (managingRoutine) {
+                            System.out.println("\nWhat would you like to do?");
+                            System.out.println("1. View exercises");
+                            System.out.println("2. Add exercise");
+                            System.out.println("3. Remove exercise");
+                            System.out.println("4. Exit");
+
+                            int choice = sc.nextInt();
+
+                            if (choice == 1) {
+                                ArrayList<Exercise> exercises = selectedRoutine.getExercises();
+
+                                if (exercises.isEmpty()) {
+                                    System.out.println("No exercises added yet.");
+                                } else {
+                                    System.out.println("Exercises:");
+
+                                    for (int i = 0; i < exercises.size(); i++) {
+                                        System.out.println((i + 1) + ". " + exercises.get(i));
+                                    }
+                                }
+
+                                sc.nextLine();
+                                System.out.println("\nPress 'Enter' to return.");
+                                sc.nextLine();
+
+                            } else if (choice == 2) {
+                                sc.nextLine();
+
+                                System.out.print("Add an exercise: ");
+                                String newExercise = sc.nextLine();
+
+                                selectedRoutine.addExercise(new Exercise(newExercise));
+
+                                System.out.println(newExercise + " added to " + selectedRoutine.getRoutineName());
+
+                            } else if (choice == 3) {
+                                ArrayList<Exercise> exercises = selectedRoutine.getExercises();
+
+                                if (exercises.isEmpty()) {
+                                    System.out.println("No exercises to remove.");
+                                } else {
+                                    System.out.println("Choose an exercise to remove:");
+                                    for (int i = 0; i < exercises.size(); i++) {
+                                        System.out.println((i + 1) + ". " + exercises.get(i));
+                                    }
+                                    int removeChoice = sc.nextInt();
+
+                                    if (removeChoice >= 1 && removeChoice <= exercises.size()) {
+                                        Exercise removedExercise = selectedRoutine.removeExercise(removeChoice - 1);
+
+                                        System.out.println(removedExercise.getExerciseName() + " removed.");
+                                    } else {
+                                        System.out.println("Invalid exercise choice.");
+                                    }
+                                }
+
+                            } else if (choice == 4) {
+                                managingRoutine = false;
+
+                            } else {
+                                System.out.println("Invalid option.");
+                            }
+                        }
                     } else {
                         System.out.println("Invalid routine choice.");
                     }
@@ -102,31 +159,24 @@ public class TrainingTracker {
             } else if (routineTypeChoice == 2) {
                 sc.nextLine();
 
-                System.out.println("Enter new routine name: ");
+                System.out.print("Enter new routine name: ");
                 String newRoutineName = sc.nextLine();
 
                 Routine newRoutine = new Routine(newRoutineName, selectedTrainingType);
-                routines.add(newRoutine);
 
+                routines.add(newRoutine);
                 selectedRoutine = newRoutine;
 
                 System.out.println("New routine added:");
                 System.out.println(selectedRoutine);
 
-                System.out.println("Updated routines for " + selectedTrainingType + ":");
-                for (Routine routine : routines) {
-                    if (routine.getTrainingType().equals(selectedTrainingType)) {
-                        System.out.println(routine);
-                    }
-                }
             } else {
-                System.out.println("Invalid option");
+                System.out.println("Invalid option.");
             }
 
-            if (selectedRoutine != null)
-                System.out.println("Starting routine: " + selectedRoutine);
+            if (selectedRoutine != null) {
+                System.out.println("Selected routine: " + selectedRoutine);
+            }
         }
-
-        sc.close();
     }
 }
