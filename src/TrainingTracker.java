@@ -92,7 +92,9 @@ public class TrainingTracker {
                             System.out.println("1. View exercises");
                             System.out.println("2. Add exercise");
                             System.out.println("3. Remove exercise");
-                            System.out.println("4. Exit");
+                            System.out.println("4. Select exercise");
+                            System.out.println("5. Start routine");
+                            System.out.println("6. Exit");
 
                             int choice = sc.nextInt();
 
@@ -145,8 +147,152 @@ public class TrainingTracker {
                                 }
 
                             } else if (choice == 4) {
-                                managingRoutine = false;
+                                ArrayList<Exercise> exercises = selectedRoutine.getExercises();
+                                System.out.println("Select an exercise: ");
 
+                                for (int i = 0; i < exercises.size(); i++) {
+                                    System.out.println((i + 1) + ". " + exercises.get(i));
+                                }
+
+                                int exerciseChoice = sc.nextInt();
+
+                                if (exerciseChoice >= 1 && exerciseChoice <= exercises.size()) {
+                                    Exercise selectedExercise = exercises.get(exerciseChoice - 1);
+                                    System.out.println("Selected exercise: " + selectedExercise.getExerciseName());
+
+                                    boolean managingExercise = true;
+
+                                    while (managingExercise) {
+                                        System.out.println("What would you like to do?");
+                                        System.out.println("1. View exercise history:");
+                                        System.out.println("2. Record workout:");
+                                        System.out.println("3. Go back");
+
+                                        int exerciseMenuChoice = sc.nextInt();
+
+                                        if (exerciseMenuChoice == 1) {
+                                            // View exercise history
+                                            ArrayList<WorkoutRecord> history = selectedExercise.getWorkoutHistory();
+
+                                            if (history.isEmpty()) {
+                                                System.out.println("No recorded workouts for this exercise. ");
+                                                sc.nextLine();
+                                                System.out.println("Press Enter to go back. ");
+                                                sc.nextLine();
+
+                                            } else {
+                                                System.out.println("\nRecorded workouts for "
+                                                        + selectedExercise.getExerciseName() + ": ");
+
+                                                for (int i = history.size() - 1; i >= 0; i--) {
+                                                    System.out.println(history.get(i));
+                                                }
+
+                                                sc.nextLine();
+                                                System.out.println("Press Enter to go back. ");
+                                                sc.nextLine();
+
+                                            }
+                                        } else if (exerciseMenuChoice == 2) {
+                                            // Add workout history
+                                            sc.nextLine();
+
+                                            System.out.println("Date (YY/MM/DD): ");
+                                            String date = sc.nextLine();
+
+                                            System.out.println("Sets: ");
+                                            int sets = sc.nextInt();
+
+                                            System.out.println("Reps: ");
+                                            int reps = sc.nextInt();
+
+                                            System.out.println("Weight (KG): ");
+                                            double weight = sc.nextDouble();
+
+                                            sc.nextLine();
+
+                                            System.out.println("Notes: ");
+                                            String notes = sc.nextLine();
+
+                                            WorkoutRecord newRecord = new WorkoutRecord(date, reps, sets, weight,
+                                                    notes);
+
+                                            selectedExercise.addWorkoutRecord(newRecord);
+
+                                            System.out.println("New workout recorded for "
+                                                    + selectedExercise.getExerciseName() + ": ");
+
+                                            System.out.println(newRecord);
+
+                                            System.out.println("Press Enter to go back. ");
+                                            sc.nextLine();
+
+                                        } else if (exerciseMenuChoice == 3) {
+                                            managingExercise = false;
+
+                                        } else {
+                                            System.out.println("Invalid option.");
+                                        }
+                                    }
+
+                                } else {
+                                    System.out.println("Invalid exercise choice.");
+                                }
+
+                            } else if (choice == 5) {
+                                ArrayList<Exercise> exercises = selectedRoutine.getExercises();
+
+                                if (exercises.isEmpty()) {
+                                    System.out.println("No exercises in this routine yet.");
+                                } else {
+                                    System.out.println("Starting routine: " + selectedRoutine.getRoutineName());
+
+                                    sc.nextLine();
+
+                                    for (int i = 0; i < exercises.size(); i++) {
+                                        Exercise currentExercise = exercises.get(i);
+
+                                        System.out.println();
+                                        System.out.println("Exercise " + (i + 1) + "/" + exercises.size() + ": "
+                                                + currentExercise.getExerciseName());
+
+                                        ArrayList<WorkoutRecord> history = currentExercise.getWorkoutHistory();
+
+                                        if (history.isEmpty()) {
+                                            System.out.println("No workout records yet.");
+
+                                        } else {
+                                            WorkoutRecord latestRecord = history.get(history.size() - 1);
+
+                                            System.out.println("Latest workout: ");
+                                            System.out.println(latestRecord);
+                                        }
+                                        System.out.println("Press Enter when finished with this exercise.");
+                                        sc.nextLine();
+
+                                        System.out.println("Did you complete this exercise as planned? ");
+                                        System.out.println("1. Completed");
+                                        System.out.println("2. Partially Completed");
+                                        System.out.println("3. Not Completed");
+
+                                        int completion = sc.nextInt();
+                                        sc.nextLine();
+
+                                        if (completion == 1) {
+                                            System.out.println("Marked as completed.");
+                                        } else if (completion == 2) {
+                                            System.out.println("Marked as partially completed.");
+                                        } else if (completion == 3) {
+                                            System.out.println("Marked as not completed.");
+                                        } else {
+                                            System.out.println("Invalid option. Skipping status.");
+                                        }
+                                    }
+                                }
+                                System.out.println("Routine finished.");
+
+                            } else if (choice == 6) {
+                                managingRoutine = false;
                             } else {
                                 System.out.println("Invalid option.");
                             }
@@ -177,6 +323,8 @@ public class TrainingTracker {
             if (selectedRoutine != null) {
                 System.out.println("Selected routine: " + selectedRoutine);
             }
+
         }
+        sc.close();
     }
 }
